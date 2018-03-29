@@ -6,23 +6,29 @@
     </li>
   </ul>
 
-    <button @click="prev()">&lt; prev</button>
-    <button @click="next()">next &gt;</button>
-    <button @click="goToPage(31)">goto</button>
+    <select v-model="perPage" @change="activatePager()">
+      <option v-for="i in perPageItems" :value="i">
+      {{ i }}
+      </option>
+    </select>
+    <button @click="flip()">&lt; prev</button>
+    <button @click="flip('next')">next &gt;</button>
+    <button @click="goToPage(30)">goto</button>
     
   </div>
 </template>
 <script>
 import axios from "axios";
+import Pager from "../js/pager.js";
   export default {
     data () {
       return {   
-        itemCount: "",        
-        perPage: 8,
-        totalPages: "",
-        currentPage: 1,
-        currentOffset: "",
+        pager: "",
 
+        itemCount: "",
+        perPageItems: [10, 20, 50],        
+        perPage: 10,
+                        
         country: ""
 
       }
@@ -37,21 +43,27 @@ import axios from "axios";
         .then((response) => {
           // console.log(response.data); // ok
           this.itemCount = response.data;
-          this.getTotalPages();
-          console.log(this.totalPages);
+          this.activatePager();          
         })
         .then(() => {
-          // send offset/limit
-          this.getItems();
+                    
         })
         .catch(function (error) {
           console.log(error);
         });
       },
+      activatePager: function() {
+        this.pager = new Pager({
+          itemCount: this.itemCount,
+          perPage: this.perPage    
+        });
+
+        this.getItems();
+      },
       getItems: function () {
         let itemData = new FormData();
-        itemData.append("f_offset", this.getCurrentOffset());
-        itemData.append("f_limit", this.perPage);
+        itemData.append("f_offset", this.pager.getCurrentOffset());
+        itemData.append("f_limit", this.pager.perPage);
         
         // let self = this;
         axios.post("./src/php/getdata.php", itemData, {
@@ -64,34 +76,20 @@ import axios from "axios";
           console.log("error");
         });
       },
-      getTotalPages: function() {
-        this.totalPages =  Math.ceil(this.itemCount / this.perPage);
-      },
-      getCurrentOffset: function() {
-        this.currentOffset = (this.currentPage - 1) * this.perPage; 
-        return this.currentOffset;       
-      },
-      next: function() {
-        if (this.currentPage !== this.totalPages) {
-          this.currentPage = this.currentPage + 1;
+      flip: function(direction) {
+        if (direction === "next") {
+          this.pager.next();
         } else {
-          this.currentPage = 1;
+          this.pager.prev();
         }
-        this.getItems();
-      },
-      prev: function() {
-        if (this.currentPage !== 1) {
-          this.currentPage = this.currentPage - 1;
-        } else {
-          this.currentPage = this.totalPages;
-        }
-        this.getItems();
+        console.log(this.pager.currentPage);
+        this.getItems();      
       },
       goToPage: function(num) {
-        if (num > 0 && num <= this.totalPages) {
-          console.log(num + " ok");
+        if (this.pager.isValidPage(num)) {
+          console.log("valid page");
         } else {
-          console.log("invalid num");
+          console.log("invalid page");
         }
       }
       
