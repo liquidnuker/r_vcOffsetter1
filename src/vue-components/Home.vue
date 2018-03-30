@@ -1,21 +1,19 @@
 <template>
-  <div>
+<div>
   <ul v-for="i in country">
     <li>
-     {{ i.name }} {{ i.region }}
+      {{ i.name }} {{ i.region }}
     </li>
   </ul>
-
-    <select v-model="perPage" @change="activatePager()">
-      <option v-for="i in perPageItems" :value="i">
+  <select v-model="perPage" @change="activatePager()">
+    <option v-for="i in perPageItems" :value="i">
       {{ i }}
-      </option>
-    </select>
-    <button @click="flip()">&lt; prev</button>
-    <button @click="flip('next')">next &gt;</button>
-    <button @click="goToPage(30)">goto</button>
-    
-  </div>
+    </option>
+  </select>
+  <button @click="flip()">&lt; prev</button>
+  <button @click="flip('next')">next &gt;</button>
+  <button @click="goToPage(30)">goto</button>
+</div>
 </template>
 <script>
 import axios from "axios";
@@ -30,23 +28,17 @@ import Pager from "../js/pager.js";
         perPage: 10,
                         
         country: ""
-
-      }
+      };
     },
     mounted: function () {
       this.getItemCount();
     },
     methods: {
       getItemCount: function() {
-        // let self = this;
-        axios.get('./src/php/getitemcount.php')
+        axios.get("./src/php/getitemcount.php")
         .then((response) => {
-          // console.log(response.data); // ok
           this.itemCount = response.data;
           this.activatePager();          
-        })
-        .then(() => {
-                    
         })
         .catch(function (error) {
           console.log(error);
@@ -57,7 +49,6 @@ import Pager from "../js/pager.js";
           itemCount: this.itemCount,
           perPage: this.perPage    
         });
-
         this.getItems();
       },
       getItems: function () {
@@ -65,7 +56,6 @@ import Pager from "../js/pager.js";
         itemData.append("f_offset", this.pager.getCurrentOffset());
         itemData.append("f_limit", this.pager.perPage);
         
-        // let self = this;
         axios.post("./src/php/getdata.php", itemData, {
           headers: {
             "Content-Type": "multipart/form-data"
@@ -94,5 +84,5 @@ import Pager from "../js/pager.js";
       }
       
     }
-  }
+  };
 </script>
