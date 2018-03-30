@@ -27,21 +27,21 @@ Pager.prototype = {
   prev: function() {
     // ret num
     if (this.hasPrev()) {
-      return this.currentPage = this.currentPage - 1;
+      this.currentPage = this.currentPage - 1;
     } else {
-      return this.currentPage = this.getTotalPages();
+      this.currentPage = this.getTotalPages();
     }
   },
   next: function() {
     // ret num
     if (this.hasNext()) {
-      return this.currentPage = this.currentPage + 1;
+      this.currentPage = this.currentPage + 1;
     } else {
-      return this.currentPage = 1;
+      this.currentPage = 1;
     }
   },
   isValidPage: function(num) {
     // ret boolean
     return num > 0 && num <= this.getTotalPages();
   }
-}
+};
