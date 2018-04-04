@@ -31,6 +31,7 @@ Pager.prototype = {
     } else {
       this.currentPage = this.getTotalPages();
     }
+    return this.currentPage;
   },
   next: function() {
     // ret num
@@ -39,6 +40,7 @@ Pager.prototype = {
     } else {
       this.currentPage = 1;
     }
+    return this.currentPage;
   },
   isValidPage: function(num) {
     // ret boolean
