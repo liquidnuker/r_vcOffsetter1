@@ -35,10 +35,22 @@ test('hasNext', () => {
 
 test('prev', () => {
   expect(pg.prev()).toBeTruthy();
+
+  pg.currentPage = 1;
+  expect(pg.prev()).toBe(pg.getTotalPages());
+
+  pg.currentPage = pg.getTotalPages();
+  expect(pg.prev()).toBe(pg.getTotalPages() - 1);
 });
 
 test('next', () => {
   expect(pg.next()).toBeTruthy();
+
+  pg.currentPage = 1;
+  expect(pg.next()).toBe(2);
+
+  pg.currentPage = pg.getTotalPages();
+  expect(pg.next()).toBe(1);
 });
 
 test('isValidPage', () => {
